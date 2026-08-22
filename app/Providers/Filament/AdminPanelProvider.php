@@ -29,7 +29,7 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->brandName('Kurios Kokkonios')
             ->brandLogo(fn () => view('filament.components.brand-logo'))
-            ->brandLogoHeight('2.75rem')
+            ->brandLogoHeight('3rem')
             ->colors([
                 'gray' => Color::Stone,
                 'primary' => Color::hex('#f97316'),
@@ -46,7 +46,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->navigationGroups([
-                'Catalog',
+                'Catalog', 'Scanning',
             ])
             ->middleware([
                 EncryptCookies::class,
