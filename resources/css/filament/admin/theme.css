@@ -1,0 +1,294 @@
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+
+:root {
+    --catalog-accent: #f97316;
+    --catalog-accent-soft: rgba(249, 115, 22, 0.12);
+    --catalog-canvas: #f4f2ed;
+    --catalog-sidebar: #ebe8e1;
+    --catalog-surface: #fffefb;
+    --catalog-border: rgba(41, 37, 36, 0.11);
+    --catalog-text-muted: #78716c;
+}
+
+.dark {
+    --catalog-canvas: #11110f;
+    --catalog-sidebar: #171714;
+    --catalog-surface: #1c1c19;
+    --catalog-surface-raised: #22221e;
+    --catalog-border: rgba(255, 247, 237, 0.09);
+    --catalog-text-muted: #a8a29e;
+}
+
+.fi-body,
+.fi-layout {
+    background: var(--catalog-canvas);
+}
+
+.fi-body {
+    color: #292524;
+    font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+}
+
+.dark .fi-body {
+    color: #f5f5f4;
+}
+
+.fi-sidebar {
+    background: var(--catalog-sidebar);
+    border-inline-end: 1px solid var(--catalog-border);
+    box-shadow: none;
+}
+
+.fi-sidebar-header {
+    height: auto;
+    min-height: 5.25rem;
+    padding: 0.875rem;
+    background: transparent;
+    border-bottom: 1px solid var(--catalog-border);
+    box-shadow: none;
+}
+
+.fi-sidebar-header-logo-ctn {
+    width: 100%;
+}
+
+.fi-logo {
+    width: 100%;
+}
+
+.catalog-brand {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.catalog-brand__mark {
+    display: grid;
+    width: 2.5rem;
+    height: 2.5rem;
+    flex: 0 0 auto;
+    place-items: center;
+    color: #fff7ed;
+    background: var(--catalog-accent);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 0.7rem;
+    box-shadow: 0 8px 24px rgba(249, 115, 22, 0.18);
+}
+
+.catalog-brand__mark svg {
+    width: 1.35rem;
+    height: 1.35rem;
+}
+
+.catalog-brand__copy {
+    display: grid;
+    min-width: 0;
+    gap: 0.1rem;
+    line-height: 1.05;
+}
+
+.catalog-brand__eyebrow {
+    color: var(--catalog-text-muted);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.59rem;
+    font-weight: 600;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+}
+
+.catalog-brand__name {
+    overflow: hidden;
+    color: currentColor;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.fi-sidebar-nav {
+    padding: 1.15rem 0.8rem;
+}
+
+.fi-sidebar-nav-groups {
+    gap: 1.35rem;
+}
+
+.fi-sidebar-group-label {
+    color: var(--catalog-text-muted);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.fi-sidebar-item-btn {
+    min-height: 2.55rem;
+    padding-inline: 0.8rem;
+    color: #57534e;
+    border: 1px solid transparent;
+    border-radius: 0.55rem;
+    transition: color 150ms ease, background-color 150ms ease, border-color 150ms ease;
+}
+
+.dark .fi-sidebar-item-btn {
+    color: #a8a29e;
+}
+
+.fi-sidebar-item-btn:hover {
+    color: #292524;
+    background: rgba(120, 113, 108, 0.08);
+}
+
+.dark .fi-sidebar-item-btn:hover {
+    color: #fafaf9;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.fi-sidebar-item.fi-active .fi-sidebar-item-btn {
+    color: #c2410c;
+    background: var(--catalog-accent-soft);
+    border-color: rgba(249, 115, 22, 0.16);
+    box-shadow: inset 2px 0 0 var(--catalog-accent);
+}
+
+.dark .fi-sidebar-item.fi-active .fi-sidebar-item-btn {
+    color: #fb923c;
+}
+
+.fi-sidebar-item-icon {
+    width: 1.15rem;
+    height: 1.15rem;
+}
+
+.fi-topbar {
+    background: color-mix(in srgb, var(--catalog-canvas) 88%, transparent);
+    border-bottom: 1px solid var(--catalog-border);
+    box-shadow: none;
+    backdrop-filter: blur(14px);
+}
+
+.fi-global-search-field {
+    border-color: var(--catalog-border);
+    border-radius: 0.55rem;
+    background: var(--catalog-surface);
+    box-shadow: none;
+}
+
+.fi-main {
+    padding-block: clamp(1.75rem, 3vw, 3rem);
+}
+
+.fi-page-header-heading {
+    font-size: clamp(1.7rem, 2vw, 2.25rem);
+    font-weight: 500;
+    letter-spacing: -0.045em;
+}
+
+.fi-page-header-subheading {
+    color: var(--catalog-text-muted);
+}
+
+.fi-btn {
+    border-radius: 0.55rem;
+    box-shadow: none;
+}
+
+.fi-wi-stats-overview-stats-ctn {
+    gap: 0.9rem;
+}
+
+.fi-wi-stats-overview-stat,
+.fi-wi-chart,
+.fi-ta-ctn {
+    overflow: hidden;
+    background: var(--catalog-surface);
+    border: 1px solid var(--catalog-border);
+    border-radius: 0.75rem;
+    box-shadow: 0 12px 32px rgba(28, 25, 23, 0.04);
+}
+
+.dark .fi-wi-stats-overview-stat,
+.dark .fi-wi-chart,
+.dark .fi-ta-ctn {
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.16);
+}
+
+.fi-wi-stats-overview-stat {
+    position: relative;
+    min-height: 10rem;
+}
+
+.fi-wi-stats-overview-stat::after {
+    position: absolute;
+    inset: auto 1.15rem 0 1.15rem;
+    height: 2px;
+    content: '';
+    background: var(--catalog-accent);
+    opacity: 0.72;
+}
+
+.fi-wi-stats-overview-stat-label,
+.fi-wi-chart-heading,
+.fi-ta-header-heading {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+}
+
+.fi-wi-stats-overview-stat-value {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: clamp(1.7rem, 2.2vw, 2.35rem);
+    font-weight: 500;
+    letter-spacing: -0.04em;
+}
+
+.fi-wi-stats-overview-stat-icon {
+    color: var(--catalog-accent);
+}
+
+.fi-wi-chart,
+.fi-ta-ctn {
+    padding: 0.15rem;
+}
+
+.fi-ta-header {
+    border-bottom: 1px solid var(--catalog-border);
+}
+
+.fi-ta-header-cell {
+    color: var(--catalog-text-muted);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.fi-ta-row {
+    border-color: var(--catalog-border);
+}
+
+.fi-ta-row:hover {
+    background: rgba(249, 115, 22, 0.035);
+}
+
+.fi-badge {
+    border-radius: 999px;
+}
+
+@media (max-width: 1023px) {
+    .fi-main {
+        padding-block: 1.25rem;
+    }
+
+    .fi-page-header-heading {
+        font-size: 1.65rem;
+    }
+}

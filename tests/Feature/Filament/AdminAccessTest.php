@@ -15,7 +15,11 @@ it('allows admin users to access the admin panel', function () {
 
     $this->actingAs($admin)
         ->get('/admin')
-        ->assertOk();
+        ->assertOk()
+        ->assertSee('Welcome back, '.str($admin->name)->before(' '))
+        ->assertSee('Catalog pulse')
+        ->assertSee('Catalog coverage')
+        ->assertSee('Recently updated');
 });
 
 it('allows admins to render each catalog resource index', function (string $path) {

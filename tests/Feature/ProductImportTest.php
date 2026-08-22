@@ -6,11 +6,51 @@ use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Csv;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-function productImportSpreadsheet(array $rows): string
+function productImportSpreadsheet(array $rows, bool $withImportNotes = false): string
 {
     $path = sys_get_temp_dir().'/product-import-'.Str::uuid().'.xlsx';
+    $spreadsheet = new Spreadsheet;
+    $spreadsheet->getActiveSheet()
+        ->setTitle('Products')
+        ->fromArray([
+            [
+                'source_id',
+                'barcode',
+                'category_slug',
+                'brand_slug',
+                'name',
+                'slug',
+                'short_description',
+                'description',
+                'availability',
+                'is_published',
+                'discontinued_at',
+            ],
+            ...$rows,
+        ]);
+
+    if ($withImportNotes) {
+        $spreadsheet->createSheet()
+            ->setTitle('Import Notes')
+            ->fromArray([
+                ['Column', 'Required?', 'Notes'],
+                ['source_id', 'Required (or barcode)', 'Internal reference'],
+                ['discontinued_at', 'Optional', 'Leave blank unless archived'],
+            ]);
+    }
+
+    (new Xlsx($spreadsheet))->save($path);
+    $spreadsheet->disconnectWorksheets();
+
+    return $path;
+}
+
+function productImportCsv(array $rows): string
+{
+    $path = sys_get_temp_dir().'/product-import-'.Str::uuid().'.csv';
     $spreadsheet = new Spreadsheet;
     $spreadsheet->getActiveSheet()->fromArray([
         [
@@ -28,11 +68,46 @@ function productImportSpreadsheet(array $rows): string
         ],
         ...$rows,
     ]);
-    (new Xlsx($spreadsheet))->save($path);
+
+    (new Csv($spreadsheet))->save($path);
     $spreadsheet->disconnectWorksheets();
 
     return $path;
 }
+
+it('imports only the first worksheet and accepts a blank discontinued date', function () {
+    $category = Category::factory()->create(['slug' => 'watercolors']);
+    $brand = Brand::factory()->create(['slug' => 'schmincke']);
+    $path = productImportSpreadsheet([
+        ['SCH-1001', '5000000020003', $category->slug, $brand->slug, 'Horadam Watercolour', 'horadam-watercolour', null, null, 'in_stock', true, null],
+    ], withImportNotes: true);
+
+    try {
+        $result = app(ImportProductsFromSpreadsheet::class)->handle($path);
+    } finally {
+        unlink($path);
+    }
+
+    expect($result->created)->toBe(1)
+        ->and($result->failures)->toBeEmpty()
+        ->and(Product::query()->where('source_id', 'SCH-1001')->value('discontinued_at'))->toBeNull();
+});
+
+it('continues to import csv files', function () {
+    $path = productImportCsv([
+        ['CSV-001', '4006381333931', null, null, 'CSV product', 'csv-product', null, null, 'in_stock', true, null],
+    ]);
+
+    try {
+        $result = app(ImportProductsFromSpreadsheet::class)->handle($path);
+    } finally {
+        unlink($path);
+    }
+
+    expect($result->created)->toBe(1)
+        ->and($result->failures)->toBeEmpty()
+        ->and(Product::query()->where('source_id', 'CSV-001')->exists())->toBeTrue();
+});
 
 it('imports valid rows and reports invalid category or brand references', function () {
     $category = Category::factory()->create(['slug' => 'acrylic-paints']);

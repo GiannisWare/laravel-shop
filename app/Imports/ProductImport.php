@@ -170,7 +170,7 @@ final class ProductImport implements SkipsEmptyRows, SkipsOnFailure, ToModel, Wi
             'description' => $this->nullableString($row['description'] ?? null),
             'availability' => $this->nullableString($row['availability'] ?? null) ?? ProductAvailability::InStock->value,
             'is_published' => $this->normalizeBoolean($row['is_published'] ?? true),
-            'discontinued_at' => $row['discontinued_at'] ?: null,
+            'discontinued_at' => $row['discontinued_at'] ?? null,
         ];
     }
 

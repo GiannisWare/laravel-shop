@@ -20,7 +20,7 @@ class ListProducts extends ListRecords
         return [
             Action::make('importProducts')
                 ->label('Import products')
-                ->icon('heroicon-o-arrow-up-tray')
+                ->icon('phosphor-upload-simple')
                 ->schema([
                     FileUpload::make('file')
                         ->label('Excel file')
@@ -60,7 +60,8 @@ class ListProducts extends ListRecords
 
                     $notification->send();
                 }),
-            CreateAction::make(),
+            CreateAction::make()
+                ->icon('phosphor-plus'),
         ];
     }
 }
