@@ -21,6 +21,7 @@ class ProductsTable
         return $table
             ->columns([
                 TextColumn::make('name')
+                    ->placeholder('Uncatalogued product')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('source_id')
