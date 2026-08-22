@@ -19,7 +19,9 @@ it('allows admin users to access the admin panel', function () {
         ->assertSee('Welcome back, '.str($admin->name)->before(' '))
         ->assertSee('Catalog pulse')
         ->assertSee('Catalog coverage')
-        ->assertSee('Recently updated');
+        ->assertSee('Recently updated')
+        ->assertSee('/images/vivechrom-logo.webp', false)
+        ->assertDontSee('Catalog admin');
 });
 
 it('allows admins to render each catalog resource index', function (string $path) {
