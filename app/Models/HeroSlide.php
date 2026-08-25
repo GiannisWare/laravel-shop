@@ -61,6 +61,16 @@ class HeroSlide extends Model implements HasMedia
 
         static::saved(fn (): bool => Cache::forget('storefront.configuration.v1'));
         static::deleted(fn (): bool => Cache::forget('storefront.configuration.v1'));
+
+        static::registerMediaCollectionCallbacks();
+    }
+
+    protected static function registerMediaCollectionCallbacks(): void
+    {
+        $handler = fn (): bool => Cache::forget('storefront.configuration.v1');
+
+        static::mediaSaved($handler);
+        static::mediaDeleted($handler);
     }
 
     protected function casts(): array

@@ -30,6 +30,9 @@ final class NavigationItemForm
                             ))
                             ->default(NavigationLocation::Header->value)
                             ->live()
+                            ->afterStateUpdated(function (Set $set): void {
+                                $set('parent_id', null);
+                            })
                             ->required(),
                         TextInput::make('label')
                             ->required()
@@ -45,7 +48,8 @@ final class NavigationItemForm
                                 ->pluck('label', 'id')
                                 ->all())
                             ->searchable()
-                            ->preload(),
+                            ->preload()
+                            ->live(),
                         Select::make('destination')
                             ->options(collect(NavigationDestination::cases())->mapWithKeys(
                                 fn (NavigationDestination $destination): array => [$destination->value => $destination->label()],

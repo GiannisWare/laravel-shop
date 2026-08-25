@@ -88,6 +88,15 @@ final class BuildProductCatalogueQuery
                 fn (array $parts): bool => $parts[0] === $value->attribute->slug && $parts[1] === $value->slug,
             ));
 
+        $resolvedAttributeSlugs = $values->pluck('attribute.slug')->unique();
+        $unresolvedAttributeSlugs = $attributeSlugs->diff($resolvedAttributeSlugs);
+
+        if ($unresolvedAttributeSlugs->isNotEmpty()) {
+            $query->whereRaw('1 = 0');
+
+            return;
+        }
+
         foreach ($values->groupBy('attribute_id') as $attributeValues) {
             $valueIds = $attributeValues->pluck('id')->all();
             $query->whereHas('attributeValues', fn (Builder $query) => $query->whereKey($valueIds));

@@ -63,7 +63,7 @@ final class HeroSlideForm
                             ->placeholder('/products')
                             ->rules([
                                 fn (): Closure => function (string $attribute, mixed $value, Closure $fail): void {
-                                    if ($value !== null && (! is_string($value) || ! str_starts_with($value, '/') || str_starts_with($value, '//'))) {
+                                    if ($value !== null && (! is_string($value) || str_contains($value, '\\') || ! str_starts_with($value, '/') || str_starts_with($value, '//'))) {
                                         $fail('The button path must start with one forward slash.');
                                     }
                                 },
