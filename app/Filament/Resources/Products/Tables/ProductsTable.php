@@ -8,6 +8,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
@@ -20,6 +21,12 @@ class ProductsTable
     {
         return $table
             ->columns([
+                SpatieMediaLibraryImageColumn::make('images')
+                    ->label('Image')
+                    ->collection('images')
+                    ->conversion('thumb')
+                    ->circular()
+                    ->size(48),
                 TextColumn::make('name')
                     ->placeholder('Uncatalogued product')
                     ->searchable()

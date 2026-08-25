@@ -35,4 +35,7 @@ it('allows admins to render each catalog resource index', function (string $path
     '/admin/categories',
     '/admin/brands',
     '/admin/attributes',
+    '/admin/navigation-items',
+    '/admin/hero-slides',
+    '/admin/brand-footer-settings',
 ]);

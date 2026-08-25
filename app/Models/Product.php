@@ -11,11 +11,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Cache;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
+/** @property ProductAvailability $availability */
 class Product extends Model implements HasMedia
 {
     /** @use HasFactory<ProductFactory> */
@@ -93,22 +95,37 @@ class Product extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('images')
-            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp']);
+            ->useDisk((string) config('media-library.disk_name', 'public'))
+            ->acceptsMimeTypes([
+                'image/jpeg',
+                'image/png',
+                'image/webp',
+                'image/avif',
+            ]);
     }
 
     public function registerMediaConversions(?Media $media = null): void
     {
-        $thumb = $this->addMediaConversion('thumb');
-        $thumb->fit(Fit::Contain, 400, 400);
-        $thumb->nonQueued();
+        foreach ([
+            'thumb' => 160,
+            'card' => 480,
+            'medium' => 900,
+            'large' => 1600,
+        ] as $name => $size) {
+            $this->addMediaConversion($name)
+                ->performOnCollections('images')
+                ->queued()
+                ->fit(Fit::Max, $size, $size)
+                ->format('webp')
+                ->quality(90);
+        }
+    }
 
-        $catalog = $this->addMediaConversion('catalog');
-        $catalog->fit(Fit::Contain, 1200, 1200);
-        $catalog->nonQueued();
-
-        $zoom = $this->addMediaConversion('zoom');
-        $zoom->fit(Fit::Contain, 2400, 2400);
-        $zoom->nonQueued();
+    protected static function booted(): void
+    {
+        static::saved(fn (): bool => Cache::forget('storefront.catalogue-filters.v1'));
+        static::deleted(fn (): bool => Cache::forget('storefront.catalogue-filters.v1'));
+        static::restored(fn (): bool => Cache::forget('storefront.catalogue-filters.v1'));
     }
 
     protected function casts(): array
