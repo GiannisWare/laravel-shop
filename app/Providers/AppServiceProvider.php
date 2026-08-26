@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Observers\StorefrontMediaObserver;
 use Carbon\CarbonImmutable;
 use Filament\Actions\View\ActionsIconAlias;
 use Filament\Forms\View\FormsIconAlias;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -31,6 +33,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Media::observe(StorefrontMediaObserver::class);
+
         $this->configureFilamentIcons();
         $this->configureDefaults();
     }

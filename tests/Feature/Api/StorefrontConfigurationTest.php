@@ -107,6 +107,43 @@ it('exposes an optimized submenu preview image through the storefront resource',
         ]);
 });
 
+it('invalidates the configuration cache when storefront media is added or deleted', function (string $modelClass, string $collection) {
+    $model = $modelClass::factory()->create();
+
+    Cache::put('storefront.configuration.v1', ['cached' => true], 60);
+
+    $model->addMedia(UploadedFile::fake()->image("{$collection}.jpg"))
+        ->toMediaCollection($collection, 'public');
+
+    expect(Cache::has('storefront.configuration.v1'))->toBeFalse();
+
+    Cache::put('storefront.configuration.v1', ['cached' => true], 60);
+    $model->clearMediaCollection($collection);
+
+    expect(Cache::has('storefront.configuration.v1'))->toBeFalse();
+})->with([
+    'brand logo' => [SiteSetting::class, 'brand_logo'],
+    'menu preview' => [NavigationItem::class, 'menu_preview'],
+    'hero image' => [HeroSlide::class, 'image'],
+]);
+
+it('reflects a brand logo replacement without saving the site setting', function () {
+    $settings = SiteSetting::factory()->create(['site_name' => 'Kokkonios']);
+    $original = $settings->addMedia(UploadedFile::fake()->image('original-logo.png'))
+        ->toMediaCollection('brand_logo', 'public');
+
+    $this->getJson('/api/v1/storefront')
+        ->assertOk()
+        ->assertJsonPath('data.site.logo.original', $original->getUrl());
+
+    $replacement = $settings->addMedia(UploadedFile::fake()->image('replacement-logo.png'))
+        ->toMediaCollection('brand_logo', 'public');
+
+    $this->getJson('/api/v1/storefront')
+        ->assertOk()
+        ->assertJsonPath('data.site.logo.original', $replacement->getUrl());
+});
+
 it('uses a safe Kokkonios fallback before settings are configured', function () {
     $this->getJson('/api/v1/storefront')
         ->assertOk()

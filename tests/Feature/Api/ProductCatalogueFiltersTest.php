@@ -42,6 +42,22 @@ it('filters products by parent category brand search and attributes', function (
         ->assertJsonPath('data.0.id', $matching->id);
 });
 
+it('returns no products when a requested attribute group has no filterable value', function () {
+    $category = Category::factory()->create();
+    $colour = Attribute::factory()->create(['name' => 'Colour', 'slug' => 'colour']);
+    $blue = AttributeValue::factory()->for($colour)->create(['value' => 'Blue', 'slug' => 'blue']);
+    $product = Product::factory()->for($category)->create();
+    $product->attributeValues()->attach($blue);
+
+    $query = http_build_query([
+        'attributes' => ['colour:blue', 'finish:missing'],
+    ]);
+
+    $this->getJson('/api/v1/products?'.$query)
+        ->assertOk()
+        ->assertJsonCount(0, 'data');
+});
+
 it('returns cached filter metadata only for public products', function () {
     $category = Category::factory()->create(['name' => 'Paints', 'slug' => 'paints']);
     $brand = Brand::factory()->create(['name' => 'Vivechrom', 'slug' => 'vivechrom']);
