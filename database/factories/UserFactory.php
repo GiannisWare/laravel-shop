@@ -30,6 +30,7 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'is_admin' => false,
+            'is_super_admin' => false,
             'remember_token' => Str::random(10),
         ];
     }
@@ -38,6 +39,14 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes): array => [
             'is_admin' => true,
+        ]);
+    }
+
+    public function superAdmin(): static
+    {
+        return $this->state(fn (array $attributes): array => [
+            'is_admin' => true,
+            'is_super_admin' => true,
         ]);
     }
 

@@ -4,7 +4,9 @@ use App\Actions\Products\ImportProductsFromSpreadsheet;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Csv;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -91,6 +93,30 @@ it('imports only the first worksheet and accepts a blank discontinued date', fun
     expect($result->created)->toBe(1)
         ->and($result->failures)->toBeEmpty()
         ->and(Product::query()->where('source_id', 'SCH-1001')->value('discontinued_at'))->toBeNull();
+});
+
+it('imports a Livewire temporary upload from its configured filesystem disk', function () {
+    Storage::fake('tmp-for-tests');
+    $path = productImportSpreadsheet([
+        ['REMOTE-001', '4006381333931', null, null, 'Remote product', 'remote-product', null, null, 'in_stock', true, null],
+    ]);
+    $filename = 'remote-products.xlsx';
+    Storage::disk('tmp-for-tests')->put("livewire-tmp/{$filename}", file_get_contents($path));
+    unlink($path);
+
+    $file = new class($filename, 'tmp-for-tests') extends TemporaryUploadedFile
+    {
+        public function getRealPath(): string
+        {
+            return $this->path;
+        }
+    };
+
+    $result = app(ImportProductsFromSpreadsheet::class)->handle($file);
+
+    expect($result->created)->toBe(1)
+        ->and($result->failures)->toBeEmpty()
+        ->and(Product::query()->where('source_id', 'REMOTE-001')->exists())->toBeTrue();
 });
 
 it('continues to import csv files', function () {

@@ -1,7 +1,7 @@
 <?php
 
-test('returns a successful response', function () {
+test('redirects the root to the admin panel', function () {
     $response = $this->get('/');
 
-    $response->assertOk();
+    $response->assertRedirect('/admin');
 });
