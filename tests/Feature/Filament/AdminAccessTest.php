@@ -20,7 +20,7 @@ it('allows admin users to access the admin panel', function () {
         ->assertSee('Catalog pulse')
         ->assertSee('Catalog coverage')
         ->assertSee('Recently updated')
-        ->assertSee('/images/vivechrom-logo.webp', false)
+        ->assertSee('alt="Vivechrom"', false)
         ->assertDontSee('Catalog admin');
 });
 
@@ -35,4 +35,7 @@ it('allows admins to render each catalog resource index', function (string $path
     '/admin/categories',
     '/admin/brands',
     '/admin/attributes',
+    '/admin/navigation-items',
+    '/admin/hero-slides',
+    '/admin/brand-footer-settings',
 ]);

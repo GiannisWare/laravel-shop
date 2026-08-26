@@ -12,6 +12,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Cache;
 
 class ValuesRelationManager extends RelationManager
 {
@@ -46,6 +47,10 @@ class ValuesRelationManager extends RelationManager
                 TextColumn::make('swatch_hex')
                     ->label('Swatch'),
             ])
+            ->defaultSort('sort_order')
+            ->reorderable('sort_order')
+            ->reorderAnimationDuration(200)
+            ->afterReordering(fn (): bool => Cache::forget('storefront.catalogue-filters.v1'))
             ->filters([
                 //
             ])

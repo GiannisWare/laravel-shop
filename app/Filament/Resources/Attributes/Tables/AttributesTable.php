@@ -9,6 +9,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Cache;
 
 class AttributesTable
 {
@@ -22,9 +23,6 @@ class AttributesTable
                 TextColumn::make('values_count')
                     ->counts('values')
                     ->label('Values'),
-                TextColumn::make('sort_order')
-                    ->label('Order')
-                    ->sortable(),
                 IconColumn::make('is_filterable')
                     ->boolean(),
             ])
@@ -32,6 +30,9 @@ class AttributesTable
                 TernaryFilter::make('is_filterable'),
             ])
             ->defaultSort('sort_order')
+            ->reorderable('sort_order')
+            ->reorderAnimationDuration(200)
+            ->afterReordering(fn (): bool => Cache::forget('storefront.catalogue-filters.v1'))
             ->recordActions([
                 EditAction::make(),
             ])

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Cache;
 
 class AttributeValue extends Model
 {
@@ -18,6 +19,7 @@ class AttributeValue extends Model
         'value',
         'slug',
         'swatch_hex',
+        'sort_order',
     ];
 
     /** @return BelongsTo<Attribute, $this> */
@@ -30,5 +32,26 @@ class AttributeValue extends Model
     public function products(): BelongsToMany
     {
         return $this->belongsToMany(Product::class)->withTimestamps();
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (AttributeValue $attributeValue): void {
+            if (! $attributeValue->isDirty('sort_order')) {
+                $attributeValue->setAttribute('sort_order', ((int) static::query()
+                    ->where('attribute_id', $attributeValue->attribute_id)
+                    ->max('sort_order')) + 10);
+            }
+        });
+
+        static::saved(fn (): bool => Cache::forget('storefront.catalogue-filters.v1'));
+        static::deleted(fn (): bool => Cache::forget('storefront.catalogue-filters.v1'));
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'sort_order' => 'integer',
+        ];
     }
 }

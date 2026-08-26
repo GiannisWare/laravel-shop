@@ -10,6 +10,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Cache;
 
 class AttributeValuesRelationManager extends RelationManager
 {
@@ -38,14 +39,17 @@ class AttributeValuesRelationManager extends RelationManager
             ->headerActions([
                 AttachAction::make()
                     ->preloadRecordSelect()
-                    ->recordSelectSearchColumns(['value', 'slug']),
+                    ->recordSelectSearchColumns(['value', 'slug'])
+                    ->after(fn (): bool => Cache::forget('storefront.catalogue-filters.v1')),
             ])
             ->recordActions([
-                DetachAction::make(),
+                DetachAction::make()
+                    ->after(fn (): bool => Cache::forget('storefront.catalogue-filters.v1')),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DetachBulkAction::make(),
+                    DetachBulkAction::make()
+                        ->after(fn (): bool => Cache::forget('storefront.catalogue-filters.v1')),
                 ]),
             ]);
     }
